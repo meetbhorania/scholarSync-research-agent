@@ -12,6 +12,7 @@ import os
 from dotenv import load_dotenv
 from agents.literature_scout import LiteratureScoutAgent
 from agents.paper_analyzer import PaperAnalyzerAgent
+from agents.research_gap_analyzer import ResearchGapAnalyzerAgent
 
 
 class ScholarSyncOrchestrator:
@@ -29,7 +30,8 @@ class ScholarSyncOrchestrator:
         print("🔧 Initializing agents...")
         self.scout = LiteratureScoutAgent(api_key)
         self.analyzer = PaperAnalyzerAgent(api_key)
-        print("✅ All agents initialized\n")
+        self.gap_analyzer = ResearchGapAnalyzerAgent(api_key)
+        print("✅ All 3 agents initialized\n")
 
     def research_workflow(self, query, max_papers=3, analyze_top=1):
         """
@@ -70,12 +72,21 @@ class ScholarSyncOrchestrator:
             if analysis:
                 analyzed_papers.append(analysis)
 
+        # STEP 4: Analyze research gaps (Agent 3)
+        if len(analyzed_papers) >= 2:
+            print(f"\n📍 STEP 4: Identifying research gaps across papers...")
+            gap_analysis = self.gap_analyzer.analyze_gaps(analyzed_papers, query)
+        else:
+            print(f"\n⚠️  STEP 4 SKIPPED: Need at least 2 analyzed papers for gap analysis")
+            gap_analysis = None
+
         # Compile results
         results = {
             'query': query,
             'total_papers_found': len(papers),
             'ranked_papers': ranked_papers,
-            'detailed_analyses': analyzed_papers
+            'detailed_analyses': analyzed_papers,
+            'gap_analysis': gap_analysis
         }
 
         return results
@@ -131,6 +142,30 @@ class ScholarSyncOrchestrator:
                 print("\n🚀 Future Work:")
                 print(f"  {summary.get('future_work', 'N/A')}")
 
+        # Show gap analysis
+        if results.get('gap_analysis'):
+            print("\n" + "=" * 70)
+            print("🔬 RESEARCH GAP ANALYSIS")
+            print("=" * 70)
+
+            gap = results['gap_analysis']
+
+            print("\n🔗 Common Themes Across Papers:")
+            print(f"  {gap.get('common_themes', 'N/A')}")
+
+            print("\n🔀 Divergent Approaches:")
+            print(f"  {gap.get('divergent_approaches', 'N/A')}")
+
+            print("\n❓ Research Gaps Identified:")
+            print(f"  {gap.get('research_gaps', 'N/A')}")
+
+            print("\n💡 Proposed Research Directions:")
+            for direction in gap.get('proposed_directions', []):
+                print(f"  {direction}")
+
+            print("\n🌟 Novel Contribution Opportunity:")
+            print(f"  {gap.get('novel_contribution', 'N/A')}")
+
         print("\n" + "=" * 70)
         print("✅ END OF REPORT")
         print("=" * 70)
@@ -175,7 +210,7 @@ def main():
             num_analyze = 2
 
         print("\n⏳ Starting research workflow...")
-        print("(This may take 1-3 minutes depending on number of papers)\n")
+        print("(This may take 2-4 minutes depending on number of papers)\n")
 
         # Run complete workflow
         results = orchestrator.research_workflow(
@@ -249,6 +284,18 @@ def save_results_to_file(results):
                 f.write(f"**Limitations:**\n{summary.get('limitations', 'N/A')}\n\n")
                 f.write(f"**Future Work:**\n{summary.get('future_work', 'N/A')}\n\n")
                 f.write("---\n\n")
+
+            # Add gap analysis to file
+            if results.get('gap_analysis'):
+                f.write("## Research Gap Analysis\n\n")
+                gap = results['gap_analysis']
+                f.write(f"**Common Themes:**\n{gap.get('common_themes', 'N/A')}\n\n")
+                f.write(f"**Divergent Approaches:**\n{gap.get('divergent_approaches', 'N/A')}\n\n")
+                f.write(f"**Research Gaps:**\n{gap.get('research_gaps', 'N/A')}\n\n")
+                f.write(f"**Proposed Research Directions:**\n")
+                for direction in gap.get('proposed_directions', []):
+                    f.write(f"- {direction}\n")
+                f.write(f"\n**Novel Contribution:**\n{gap.get('novel_contribution', 'N/A')}\n\n")
 
         print(f"✅ Results saved to: {filename}")
 
