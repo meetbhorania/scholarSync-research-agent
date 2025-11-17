@@ -445,8 +445,7 @@ class ScholarSyncApp:
                         <p style='margin-bottom: 0.5rem;'><strong>Automated Literature Review Powered by AI Agents</strong></p>
                         <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2024</p>
                         <p style='font-size: 0.75rem; color: #AAA;'>
-                            Created by <strong>Meet Bhorania</strong> • 
-                             
+                            Created by <strong>Meet Bhorania</strong> • AI Engineer, London • 
                             <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: none;'>LinkedIn</a>
                         </p>
                     </div>
