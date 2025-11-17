@@ -441,10 +441,16 @@ class ScholarSyncApp:
 
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("""
-            <div style='text-align: center; color: #999; font-size: 0.85rem;'>
-                Multi-Agent Architecture • Kaggle AI Agents Capstone
-            </div>
-        """, unsafe_allow_html=True)
+                    <div style='text-align: center; color: #999; font-size: 0.85rem; padding: 1rem 0;'>
+                        <p style='margin-bottom: 0.5rem;'><strong>Automated Literature Review Powered by AI Agents</strong></p>
+                        <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2024</p>
+                        <p style='font-size: 0.75rem; color: #AAA;'>
+                            Created by <strong>Meet Bhorania</strong> • 
+                            <a href='https://github.com/meetbhorania' style='color: #667EEA; text-decoration: none;'>GitHub</a> • 
+                            <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: none;'>LinkedIn</a>
+                        </p>
+                    </div>
+                """, unsafe_allow_html=True)
 
     def workflow_page(self):
         """Workflow page with topic validation and red border error."""
