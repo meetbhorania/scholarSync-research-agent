@@ -5,6 +5,7 @@ from agents.literature_scout import LiteratureScoutAgent
 from agents.paper_analyzer import PaperAnalyzerAgent
 from agents.research_gap_analyzer import ResearchGapAnalyzerAgent
 import datetime
+from streamlit_autorefresh import st_autorefresh
 
 # Page config
 st.set_page_config(
@@ -25,6 +26,31 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     * {
         font-family: 'Inter', -apple-system, sans-serif;
+    }
+
+    /* 3D Cube Rotate Animation - ENHANCED */
+    @keyframes rotateCube {
+        0% {
+            opacity: 0;
+            transform: perspective(600px) rotateX(60deg);
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            opacity: 1;
+            transform: perspective(600px) rotateX(0deg);
+        }
+    }
+
+    .stTextInput>div>div>input {
+        perspective: 1000px;
+    }
+
+    .stTextInput>div>div>input::placeholder {
+        animation: rotateCube 0.8s ease-out;
+        transform-style: preserve-3d;
+        display: inline-block;
     }
 
     /* Smooth background */
@@ -108,7 +134,7 @@ st.markdown("""
         font-size: 1rem;
         font-weight: 500;
         padding: 0.75rem 2rem;
-        border-radius: 50px; /* Fully rounded/pill shape */
+        border-radius: 50px;
         border: none;
         transition: all 0.2s ease;
         box-shadow: none;
@@ -135,7 +161,7 @@ st.markdown("""
         margin-bottom: 2rem;
         text-align: center;
     }
-    
+
     .element-container:has(.stProgress) {
         margin-bottom: 0px !important;
         padding-top: 0px !important;
@@ -151,6 +177,7 @@ st.markdown("""
         font-size: 0.95rem !important;
         color: #1a1a1a !important;
         transition: all 0.15s ease !important;
+        caret-color: #1a1a1a !important;
     }
 
     .stTextInput>div>div>input:focus {
@@ -178,27 +205,25 @@ st.markdown("""
     }
 
     /* Smooth progress */
-    
+
     .stProgress {
         background: transparent !important;
     }
-    
+
     .stProgress>div {
-        /* Target the outer track (the bar background) */
-        background: transparent !important; /* CHANGED: Make it transparent */
+        background: transparent !important;
         height: 4px !important; 
         border-radius: 2px !important;
-        border: none !important; /* ADDED: Remove any border */
+        border: none !important;
     }
-    
+
     .stProgress>div>div {
         background: #1a1a1a !important;
         height: 4px !important;
         border-radius: 2px !important;
         transition: width 0.3s ease-out !important;
     }
-    
-    /* Hide the default Streamlit progress bar background */
+
     .stProgress [data-testid="stMarkdownContainer"] {
         display: none !important;
     }
@@ -213,16 +238,16 @@ st.markdown("""
 
     /* Minimal expander */
     .streamlit-expanderHeader {
-        background: #1a1a1a !important;  /* CHANGED: Black background */
+        background: #1a1a1a !important;
         border: 1px solid #1a1a1a !important;
         border-radius: 6px !important;
-        font-weight: 600 !important;  /* CHANGED: Bolder */
-        color: #FFFFFF !important;  /* CHANGED: White text */
+        font-weight: 600 !important;
+        color: #FFFFFF !important;
         padding: 0.75rem 1rem !important;
     }
 
     .streamlit-expanderHeader:hover {
-        background: #333 !important;  /* CHANGED: Lighter black on hover */
+        background: #333 !important;
         border-color: #333 !important;
     }
 
@@ -238,19 +263,19 @@ st.markdown("""
     .stDownloadButton>button {
         background: #1a1a1a !important;
         color: white !important;
-        font-size: 1rem !important;  /* CHANGED: Match Run Analysis */
+        font-size: 1rem !important;
         font-weight: 500 !important;
-        padding: 0.75rem 0.75rem !important;  /* CHANGED: Match Run Analysis */
-        border-radius: 50px !important;  /* CHANGED: Pill shape like Run Analysis */
+        padding: 0.75rem 0.75rem !important;
+        border-radius: 50px !important;
         border: none !important;
-        transition: all 0.2s ease !important;  /* ADDED: Smooth transition */
-        box-shadow: none !important;  /* ADDED: No shadow by default */
+        transition: all 0.2s ease !important;
+        box-shadow: none !important;
     }
 
     .stDownloadButton>button:hover {
         background: #333 !important;
-        transform: translateY(-2px) !important;  /* ADDED: Lift on hover */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;  /* ADDED: Shadow on hover */
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
     }
 
     /* Clean messages */
@@ -292,14 +317,14 @@ st.markdown("""
     .section-label {
         font-size: 0.85rem;
         font-weight: 700;
-        color: #1a1a1a !important;  /* ADDED: !important */
+        color: #1a1a1a !important;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin: 1rem 0 0.5rem 0;
-        display: block !important;  /* ADDED: Force display */
-        background: #F5F5F5 !important;  /* ADDED: Light gray background */
-        padding: 0.5rem 0.75rem !important;  /* ADDED: Padding */
-        border-radius: 4px !important;  /* ADDED: Rounded corners */
+        display: block !important;
+        background: #F5F5F5 !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 4px !important;
     }
 
     .section-text {
@@ -429,7 +454,10 @@ class ScholarSyncApp:
         col1, col2, col3 = st.columns([0.5, 1, 0.5])
 
         with col2:
-            
+
+            # Auto-refresh every 2 seconds to rotate placeholder
+            st_autorefresh(interval=2000, key="placeholder_refresh")
+
             # --- CONDITIONAL CSS INJECTION ---
             if st.session_state.topic_error:
                 st.markdown("""
@@ -443,11 +471,27 @@ class ScholarSyncApp:
                 """, unsafe_allow_html=True)
             # ---------------------------------
 
+            # Rotating placeholder
+            import time
+
+            topics = [
+                "transformer models in NLP...",
+                "quantum computing applications...",
+                "deep learning for medical imaging...",
+                "reinforcement learning in robotics...",
+                "neural architecture search...",
+                "federated learning privacy...",
+                "computer vision for autonomous vehicles..."
+            ]
+
+            # Rotate through topics every 2 seconds
+            topic_index = int(time.time() / 1.5) % len(topics)
+
             query = st.text_input(
                 "Topic",
-                placeholder="e.g., transformer models in NLP",
+                placeholder=f"e.g., {topics[topic_index]}",
                 label_visibility="collapsed",
-                key="topic_input" # Added key for session state access
+                key="topic_input"
             )
             
             # --- LIVE VALIDATION RESET ---
