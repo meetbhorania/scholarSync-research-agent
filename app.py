@@ -403,6 +403,7 @@ class ScholarSyncApp:
             </div>
         """, unsafe_allow_html=True)
 
+        st.markdown("<br>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns(3, gap="medium")
 
         with col1:
@@ -432,7 +433,7 @@ class ScholarSyncApp:
                 </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br><br>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1.25, 0.5, 1.25])
         with col2:
             if st.button("Start", key="start", use_container_width=True):
