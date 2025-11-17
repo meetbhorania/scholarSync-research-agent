@@ -451,7 +451,9 @@ class ScholarSyncApp:
 
         if st.button("← Back", key="back"):
             st.session_state.page = 'home'
-            st.session_state.topic_error = False # Reset error state when leaving
+            st.session_state.topic_error = False
+            st.session_state.running_analysis = False  # ADD THIS LINE
+            st.session_state.analysis_started = False  # ADD THIS LINE
             st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -462,11 +464,16 @@ class ScholarSyncApp:
 
         with col2:
 
-            # Only auto-refresh if NOT running analysis
+            # Initialize analysis state
             if 'running_analysis' not in st.session_state:
                 st.session_state.running_analysis = False
 
-            if not st.session_state.running_analysis:
+            # Initialize button clicked state
+            if 'analysis_started' not in st.session_state:
+                st.session_state.analysis_started = False
+
+            # Only auto-refresh placeholder when NOT analyzing and NOT showing results
+            if not st.session_state.running_analysis and not st.session_state.analysis_started:
                 st_autorefresh(interval=2000, key="placeholder_refresh")
 
             # --- CONDITIONAL CSS INJECTION ---
@@ -525,12 +532,15 @@ class ScholarSyncApp:
             start = st.button("Run Analysis", use_container_width=True) 
 
         # --- VALIDATION LOGIC ---
-        if start:
-            if query:
-                # Successful run
-                st.session_state.topic_error = False
-                st.markdown("<br>", unsafe_allow_html=True)
-                self.run_analysis(query, num_papers, num_analyze)
+            # --- VALIDATION LOGIC ---
+            if start:
+                if query:
+                    # Successful run
+                    st.session_state.topic_error = False
+                    st.session_state.running_analysis = True
+                    st.session_state.analysis_started = True
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    self.run_analysis(query, num_papers, num_analyze)
             else:
                 # Empty query, set error state and show warning
                 st.session_state.topic_error = True
