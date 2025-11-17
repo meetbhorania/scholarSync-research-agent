@@ -452,8 +452,11 @@ class ScholarSyncApp:
         if st.button("← Back", key="back"):
             st.session_state.page = 'home'
             st.session_state.topic_error = False
-            st.session_state.running_analysis = False  # ADD THIS LINE
-            st.session_state.analysis_started = False  # ADD THIS LINE
+            # Reset all analysis states
+            if 'running_analysis' in st.session_state:
+                del st.session_state.running_analysis
+            if 'analysis_started' in st.session_state:
+                del st.session_state.analysis_started
             st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -464,16 +467,8 @@ class ScholarSyncApp:
 
         with col2:
 
-            # Initialize analysis state
-            if 'running_analysis' not in st.session_state:
-                st.session_state.running_analysis = False
-
-            # Initialize button clicked state
-            if 'analysis_started' not in st.session_state:
-                st.session_state.analysis_started = False
-
-            # Only auto-refresh placeholder when NOT analyzing and NOT showing results
-            if not st.session_state.running_analysis and not st.session_state.analysis_started:
+            # Only auto-refresh placeholder when showing the form (not during/after analysis)
+            if 'analysis_started' not in st.session_state or not st.session_state.get('analysis_started', False):
                 st_autorefresh(interval=2000, key="placeholder_refresh")
 
             # --- CONDITIONAL CSS INJECTION ---
@@ -493,17 +488,17 @@ class ScholarSyncApp:
             import time
 
             topics = [
-                "transformer models in NLP...",
-                "quantum computing applications...",
-                "deep learning for medical imaging...",
-                "reinforcement learning in robotics...",
-                "neural architecture search...",
-                "federated learning privacy...",
-                "computer vision for autonomous vehicles..."
+                "transformer models in NLP",
+                "quantum computing applications",
+                "deep learning for medical imaging",
+                "reinforcement learning in robotics",
+                "neural architecture search",
+                "federated learning privacy",
+                "computer vision for autonomous vehicles"
             ]
 
             # Rotate through topics every 2 seconds
-            topic_index = int(time.time() / 1.5) % len(topics)
+            topic_index = int(time.time() / 2) % len(topics)
 
             query = st.text_input(
                 "Topic",
@@ -511,9 +506,8 @@ class ScholarSyncApp:
                 label_visibility="collapsed",
                 key="topic_input"
             )
-            
+
             # --- LIVE VALIDATION RESET ---
-            # If the user starts typing after an error, reset the flag for the next rerun
             if 'topic_input' in st.session_state and st.session_state.topic_error and st.session_state.topic_input:
                 st.session_state.topic_error = False
                 st.rerun()
@@ -529,23 +523,21 @@ class ScholarSyncApp:
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            start = st.button("Run Analysis", use_container_width=True) 
+            start = st.button("Run Analysis", use_container_width=True)
 
-        # --- VALIDATION LOGIC ---
             # --- VALIDATION LOGIC ---
-            if start:
-                if query:
-                    # Successful run
-                    st.session_state.topic_error = False
-                    st.session_state.running_analysis = True
-                    st.session_state.analysis_started = True
-                    st.markdown("<br>", unsafe_allow_html=True)
-                    self.run_analysis(query, num_papers, num_analyze)
+        if start:
+            if query:
+                # Successful run - mark as started
+                st.session_state.topic_error = False
+                st.session_state.analysis_started = True
+                st.markdown("<br>", unsafe_allow_html=True)
+                self.run_analysis(query, num_papers, num_analyze)
             else:
                 # Empty query, set error state and show warning
                 st.session_state.topic_error = True
                 st.warning("Please enter a research topic before running the analysis.")
-                st.rerun() # Rerun to apply the conditional CSS
+                st.rerun()
         # ------------------------
 
     def run_analysis(self, query, max_papers, analyze_top):
