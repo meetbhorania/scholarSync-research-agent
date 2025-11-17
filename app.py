@@ -369,8 +369,6 @@ class ScholarSyncApp:
         if not self.api_key:
             st.error("⚠️ GEMINI_API_KEY not found. Please add it in Streamlit Cloud secrets.")
             st.stop()
-        else:
-            st.success(f"✅ API Key loaded (ends with: ...{self.api_key[-4:]})")  # Debug line
 
         if 'page' not in st.session_state:
             st.session_state.page = 'home'
@@ -563,43 +561,45 @@ class ScholarSyncApp:
                 st.error("No papers found")
                 return
 
+            # Rank
+            with status:
+                st.markdown('<p class="status-text">Ranking...</p>', unsafe_allow_html=True)
+            progress.progress(40)
+
+            ranked = self.scout.rank_papers_with_gemini(papers, query)
+
+            # Analyze
+            with status:
+                st.markdown('<p class="status-text">Analyzing...</p>', unsafe_allow_html=True)
+            progress.progress(60)
+
+            analyzed = []
+            for i, p in enumerate(ranked[:analyze_top], 1):
+                analysis = self.analyzer.analyze_paper(p['url'], p['title'])
+                if analysis:
+                    analyzed.append(analysis)
+                progress.progress(60 + (i * 15))
+
+            # Gap
+            gap = None
+            if len(analyzed) >= 2:
+                with status:
+                    st.markdown('<p class="status-text">Finding gaps...</p>', unsafe_allow_html=True)
+                progress.progress(90)
+                gap = self.gap_analyzer.analyze_gaps(analyzed, query)
+
+            progress.progress(100)
+            status.empty()
+
+            # DEBUG: Check if we reach here
+            st.write("✅ Analysis complete, showing results...")
+
+            self.show_results(query, ranked, analyzed, gap)
+
         except Exception as e:
             st.error(f"❌ Error: {str(e)}")
             import traceback
             st.code(traceback.format_exc())
-            return
-
-        # Rank
-        with status:
-            st.markdown('<p class="status-text">Ranking...</p>', unsafe_allow_html=True)
-        progress.progress(40)
-
-        ranked = self.scout.rank_papers_with_gemini(papers, query)
-
-        # Analyze
-        with status:
-            st.markdown('<p class="status-text">Analyzing...</p>', unsafe_allow_html=True)
-        progress.progress(60)
-
-        analyzed = []
-        for i, p in enumerate(ranked[:analyze_top], 1):
-            analysis = self.analyzer.analyze_paper(p['url'], p['title'])
-            if analysis:
-                analyzed.append(analysis)
-            progress.progress(60 + (i * 15))
-
-        # Gap
-        gap = None
-        if len(analyzed) >= 2:
-            with status:
-                st.markdown('<p class="status-text">Finding gaps...</p>', unsafe_allow_html=True)
-            progress.progress(90)
-            gap = self.gap_analyzer.analyze_gaps(analyzed, query)
-
-        progress.progress(100)
-        status.empty()
-
-        self.show_results(query, ranked, analyzed, gap)
 
     def show_results(self, query, ranked, analyzed, gap):
         """Show results"""
