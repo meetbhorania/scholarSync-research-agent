@@ -439,12 +439,15 @@ class ScholarSyncApp:
                 st.session_state.page = 'workflow'
                 st.rerun()
 
-        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
         st.markdown("""
-                    <div style='text-align: center; color: #999; font-size: 0.85rem; padding: 1rem 0;'>
-                        <p style='margin-bottom: 0.5rem;'><strong>Automated Literature Review Powered by AI Agents</strong></p>
+                    <div style='position: fixed; bottom: 0; left: 0; width: 100%; 
+                                background: #FFFFFF; border-top: 1px solid #E0E0E0;
+                                text-align: center; color: #999; font-size: 0.85rem; 
+                                padding: 1.5rem 0; z-index: 999;'>
+                        <p style='margin-bottom: 0.5rem;'><strong style='color: #666;'>Automated Literature Review Powered by AI Agents</strong></p>
                         <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2024</p>
-                        <p style='font-size: 0.75rem; color: #AAA;'>
+                        <p style='font-size: 0.75rem; color: #AAA; margin: 0;'>
                             Created by <strong>Meet Bhorania</strong> • AI Engineer, London • 
                             <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: none;'>LinkedIn</a>
                         </p>
