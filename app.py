@@ -462,8 +462,12 @@ class ScholarSyncApp:
 
         with col2:
 
-            # Auto-refresh every 2 seconds to rotate placeholder
-            st_autorefresh(interval=2000, key="placeholder_refresh")
+            # Only auto-refresh if NOT running analysis
+            if 'running_analysis' not in st.session_state:
+                st.session_state.running_analysis = False
+
+            if not st.session_state.running_analysis:
+                st_autorefresh(interval=2000, key="placeholder_refresh")
 
             # --- CONDITIONAL CSS INJECTION ---
             if st.session_state.topic_error:
@@ -537,6 +541,9 @@ class ScholarSyncApp:
     def run_analysis(self, query, max_papers, analyze_top):
         """Run analysis"""
 
+        # Stop auto-refresh during analysis
+        st.session_state.running_analysis = True
+
         try:
             progress = st.progress(0)
             status = st.empty()
@@ -595,6 +602,9 @@ class ScholarSyncApp:
             st.write("✅ Analysis complete, showing results...")
 
             self.show_results(query, ranked, analyzed, gap)
+
+            # Keep results visible, don't auto-refresh anymore
+            st.session_state.running_analysis = True
 
         except Exception as e:
             st.error(f"❌ Error: {str(e)}")
