@@ -357,7 +357,8 @@ class ScholarSyncApp:
         load_dotenv()
         # NOTE: Since this is a Streamlit app run outside of the Canvas environment, 
         # we assume os.getenv('GEMINI_API_KEY') is used.
-        self.api_key = os.getenv('GEMINI_API_KEY')
+        # Check both environment and Streamlit secrets
+        self.api_key = os.getenv('GEMINI_API_KEY') or st.secrets.get("GEMINI_API_KEY", None)
 
         if not self.api_key:
             st.error("⚠️ Add GEMINI_API_KEY to .env file")
