@@ -467,8 +467,12 @@ class ScholarSyncApp:
 
         with col2:
 
-            # Only auto-refresh placeholder when showing the form (not during/after analysis)
-            if 'analysis_started' not in st.session_state or not st.session_state.get('analysis_started', False):
+            # Check if user is typing (session state will have the value)
+            user_typing = st.session_state.get('topic_input', '') != ''
+            analysis_done = st.session_state.get('analysis_started', False)
+
+            # Only auto-refresh if user hasn't typed anything AND analysis not started
+            if not user_typing and not analysis_done:
                 st_autorefresh(interval=2000, key="placeholder_refresh")
 
             # --- CONDITIONAL CSS INJECTION ---
