@@ -135,6 +135,12 @@ st.markdown("""
         margin-bottom: 2rem;
         text-align: center;
     }
+    
+    .element-container:has(.stProgress) {
+        margin-bottom: 0px !important;
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
 
     /* Smooth inputs */
     .stTextInput>div>div>input {
@@ -172,11 +178,29 @@ st.markdown("""
     }
 
     /* Smooth progress */
+    
+    .stProgress {
+        background: transparent !important;
+    }
+    
+    .stProgress>div {
+        /* Target the outer track (the bar background) */
+        background: transparent !important; /* CHANGED: Make it transparent */
+        height: 4px !important; 
+        border-radius: 2px !important;
+        border: none !important; /* ADDED: Remove any border */
+    }
+    
     .stProgress>div>div {
         background: #1a1a1a !important;
         height: 4px !important;
         border-radius: 2px !important;
         transition: width 0.3s ease-out !important;
+    }
+    
+    /* Hide the default Streamlit progress bar background */
+    .stProgress [data-testid="stMarkdownContainer"] {
+        display: none !important;
     }
 
     /* Clean status */
@@ -189,15 +213,17 @@ st.markdown("""
 
     /* Minimal expander */
     .streamlit-expanderHeader {
-        background: #FAFAFA !important;
-        border: 1px solid #E0E0E0 !important;
+        background: #1a1a1a !important;  /* CHANGED: Black background */
+        border: 1px solid #1a1a1a !important;
         border-radius: 6px !important;
-        font-weight: 500 !important;
-        color: #1a1a1a !important;
+        font-weight: 600 !important;  /* CHANGED: Bolder */
+        color: #FFFFFF !important;  /* CHANGED: White text */
+        padding: 0.75rem 1rem !important;
     }
 
     .streamlit-expanderHeader:hover {
-        background: #F5F5F5 !important;
+        background: #333 !important;  /* CHANGED: Lighter black on hover */
+        border-color: #333 !important;
     }
 
     .streamlit-expanderContent {
@@ -205,22 +231,26 @@ st.markdown("""
         border: 1px solid #E0E0E0 !important;
         border-top: none !important;
         border-radius: 0 0 6px 6px !important;
+        padding: 1rem !important;
     }
 
     /* Smooth download */
     .stDownloadButton>button {
         background: #1a1a1a !important;
         color: white !important;
-        font-size: 0.95rem !important;
+        font-size: 1rem !important;  /* CHANGED: Match Run Analysis */
         font-weight: 500 !important;
-        padding: 0.75rem 1.75rem !important;
-        border-radius: 6px !important;
+        padding: 0.75rem 0.75rem !important;  /* CHANGED: Match Run Analysis */
+        border-radius: 50px !important;  /* CHANGED: Pill shape like Run Analysis */
         border: none !important;
-        transition: all 0.15s ease !important;
+        transition: all 0.2s ease !important;  /* ADDED: Smooth transition */
+        box-shadow: none !important;  /* ADDED: No shadow by default */
     }
 
     .stDownloadButton>button:hover {
         background: #333 !important;
+        transform: translateY(-2px) !important;  /* ADDED: Lift on hover */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;  /* ADDED: Shadow on hover */
     }
 
     /* Clean messages */
@@ -260,12 +290,16 @@ st.markdown("""
 
     /* Section headers */
     .section-label {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #999;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1a1a1a !important;  /* ADDED: !important */
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin: 1rem 0 0.5rem 0;
+        display: block !important;  /* ADDED: Force display */
+        background: #F5F5F5 !important;  /* ADDED: Light gray background */
+        padding: 0.5rem 0.75rem !important;  /* ADDED: Padding */
+        border-radius: 4px !important;  /* ADDED: Rounded corners */
     }
 
     .section-text {
@@ -462,6 +496,7 @@ class ScholarSyncApp:
             status.markdown(f'<p class="status-text">{message} ({percent}%)</p>', unsafe_allow_html=True)
 
         # Search
+        update_status("Searching papers...", 25)
         with status:
             st.markdown('<p class="status-text">Searching papers...</p>', unsafe_allow_html=True)
         progress.progress(25)
@@ -507,10 +542,10 @@ class ScholarSyncApp:
         """Show results"""
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.success("✓ Complete")
+        # st.success("✓ Complete")
 
         # Papers
-        with st.expander("📚 Ranked Papers", expanded=False):
+        with st.expander("📚 Ranked Papers", expanded=True):
             for i, p in enumerate(ranked, 1):
                 st.markdown(f"""
                     <div class="paper-item">
@@ -525,7 +560,13 @@ class ScholarSyncApp:
         with st.expander("📄 Analysis", expanded=True):
             for i, a in enumerate(analyzed, 1):
                 s = a['summary']
-                st.markdown(f"**{i}. {a['title']}**")
+                # CHANGED: Add black background to title
+                st.markdown(f"""
+                                   <div style='background: #1a1a1a; color: white; padding: 0.75rem 1rem; 
+                                               border-radius: 6px; margin-bottom: 1rem; font-weight: 600;'>
+                                       {i}. {a['title']}
+                                   </div>
+                               """, unsafe_allow_html=True)
 
                 st.markdown('<p class="section-label">Research Question</p>', unsafe_allow_html=True)
                 st.markdown(f'<p class="section-text">{s.get("research_question", "N/A")}</p>', unsafe_allow_html=True)
@@ -543,30 +584,46 @@ class ScholarSyncApp:
                 st.markdown(f'<p class="section-text">{s.get("future_work", "N/A")}</p>', unsafe_allow_html=True)
 
                 if i < len(analyzed):
-                    st.markdown("<br>", unsafe_allow_html=True)
-                    st.divider()
+                    st.markdown('<hr style="border: none; border-top: 1px solid #E0E0E0; margin: 2rem 0;">',
+                                unsafe_allow_html=True)
 
         # Gaps
         if gap:
             st.markdown("<br>", unsafe_allow_html=True)
             with st.expander("💡 Research Gaps", expanded=True):
                 st.markdown('<p class="section-label">Common Themes</p>', unsafe_allow_html=True)
-                st.markdown(f'<p class="section-text">{gap.get("common_themes", "N/A")}</p>', unsafe_allow_html=True)
+                st.markdown(f'<p class="section-text">{gap.get("common_themes", "N/A").replace("**", "")}</p>',
+                            unsafe_allow_html=True)
 
                 st.markdown('<p class="section-label">Divergent Approaches</p>', unsafe_allow_html=True)
-                st.markdown(f'<p class="section-text">{gap.get("divergent_approaches", "N/A")}</p>',
+                st.markdown(f'<p class="section-text">{gap.get("divergent_approaches", "N/A").replace("**", "")}</p>',
                             unsafe_allow_html=True)
 
                 st.markdown('<p class="section-label">Research Gaps</p>', unsafe_allow_html=True)
-                st.markdown(f'<p class="section-text">{gap.get("research_gaps", "N/A")}</p>', unsafe_allow_html=True)
+                # Split by asterisks and create bullet points on new lines
+                gaps_text = gap.get("research_gaps", "N/A").replace("**", "")
+                # Split by "* " to get individual bullet points
+                bullet_points = [point.strip() for point in gaps_text.split("* ") if point.strip()]
+
+                # Display each bullet point on a new line
+                for point in bullet_points:
+                    if ":" in point:
+                        # Split at first colon to make header bold
+                        parts = point.split(":", 1)
+                        st.markdown(
+                            f'<p class="section-text" style="margin-bottom: 1rem;"><strong>• {parts[0]}:</strong> {parts[1]}</p>',
+                            unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<p class="section-text" style="margin-bottom: 1rem;">• {point}</p>',
+                                    unsafe_allow_html=True)
 
                 st.markdown('<p class="section-label">Proposed Directions</p>', unsafe_allow_html=True)
                 for idx, d in enumerate(gap.get("proposed_directions", []), 1):
-                    st.markdown(f'<p class="section-text">{idx}. {d.lstrip("0123456789.• ")}</p>',
+                    st.markdown(f'<p class="section-text">{idx}. {d.lstrip("0123456789.• ").replace("**", "")}</p>',
                                 unsafe_allow_html=True)
 
                 st.markdown('<p class="section-label">Novel Contribution</p>', unsafe_allow_html=True)
-                st.markdown(f'<p class="section-text">{gap.get("novel_contribution", "N/A")}</p>',
+                st.markdown(f'<p class="section-text">{gap.get("novel_contribution", "N/A").replace("**", "")}</p>',
                             unsafe_allow_html=True)
 
         # Download
@@ -575,7 +632,7 @@ class ScholarSyncApp:
         with col2:
             report = self.gen_report(query, ranked, analyzed, gap)
             st.download_button(
-                "Download",
+                "Download Report",
                 report,
                 f"report_{datetime.datetime.now().strftime('%Y%m%d')}.md",
                 "text/markdown",
