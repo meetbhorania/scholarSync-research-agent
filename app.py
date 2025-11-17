@@ -562,7 +562,7 @@ class ScholarSyncApp:
             papers = self.scout.search_papers(query, max_results=max_papers)
 
             # DEBUG LINE
-            st.write(f"🔍 DEBUG: Found {len(papers) if papers else 0} papers")
+            #st.write(f"🔍 DEBUG: Found {len(papers) if papers else 0} papers")
 
             if not papers:
                 st.error("No papers found")
@@ -599,7 +599,7 @@ class ScholarSyncApp:
             status.empty()
 
             # DEBUG: Check if we reach here
-            st.write("✅ Analysis complete, showing results...")
+            # st.write("✅ Analysis complete, showing results...")
 
             self.show_results(query, ranked, analyzed, gap)
 
