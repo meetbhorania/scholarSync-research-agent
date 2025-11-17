@@ -446,7 +446,7 @@ class ScholarSyncApp:
                         <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2024</p>
                         <p style='font-size: 0.75rem; color: #AAA;'>
                             Created by <strong>Meet Bhorania</strong> • 
-                            <a href='https://github.com/meetbhorania' style='color: #667EEA; text-decoration: none;'>GitHub</a> • 
+                             
                             <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: none;'>LinkedIn</a>
                         </p>
                     </div>
