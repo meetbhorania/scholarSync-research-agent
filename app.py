@@ -354,15 +354,23 @@ st.markdown("""
 class ScholarSyncApp:
 
     def __init__(self):
-        load_dotenv()
-        # NOTE: Since this is a Streamlit app run outside of the Canvas environment, 
-        # we assume os.getenv('GEMINI_API_KEY') is used.
-        # Check both environment and Streamlit secrets
-        self.api_key = os.getenv('GEMINI_API_KEY') or st.secrets.get("GEMINI_API_KEY", None)
+        try:
+            load_dotenv()
+        except:
+            pass
+
+        # Try multiple sources for API key
+        self.api_key = None
+        if hasattr(st, 'secrets') and 'GEMINI_API_KEY' in st.secrets:
+            self.api_key = st.secrets['GEMINI_API_KEY']
+        else:
+            self.api_key = os.getenv('GEMINI_API_KEY')
 
         if not self.api_key:
-            st.error("⚠️ Add GEMINI_API_KEY to .env file")
+            st.error("⚠️ GEMINI_API_KEY not found. Please add it in Streamlit Cloud secrets.")
             st.stop()
+        else:
+            st.success(f"✅ API Key loaded (ends with: ...{self.api_key[-4:]})")  # Debug line
 
         if 'page' not in st.session_state:
             st.session_state.page = 'home'
@@ -528,27 +536,37 @@ class ScholarSyncApp:
                 st.rerun() # Rerun to apply the conditional CSS
         # ------------------------
 
-
     def run_analysis(self, query, max_papers, analyze_top):
         """Run analysis"""
 
-        progress = st.progress(0)
-        status = st.empty()
+        try:
+            progress = st.progress(0)
+            status = st.empty()
 
-        # Helper function to update both the bar and the status text with the percentage
-        def update_status(message, percent):
-            progress.progress(percent)
-            status.markdown(f'<p class="status-text">{message} ({percent}%)</p>', unsafe_allow_html=True)
+            # Helper function to update both the bar and the status text with the percentage
+            def update_status(message, percent):
+                progress.progress(percent)
+                status.markdown(f'<p class="status-text">{message} ({percent}%)</p>', unsafe_allow_html=True)
 
-        # Search
-        update_status("Searching papers...", 25)
-        with status:
-            st.markdown('<p class="status-text">Searching papers...</p>', unsafe_allow_html=True)
-        progress.progress(25)
+            # Search
+            update_status("Searching papers...", 25)
+            with status:
+                st.markdown('<p class="status-text">Searching papers...</p>', unsafe_allow_html=True)
+            progress.progress(25)
 
-        papers = self.scout.search_papers(query, max_results=max_papers)
-        if not papers:
-            st.error("No papers found")
+            papers = self.scout.search_papers(query, max_results=max_papers)
+
+            # DEBUG LINE
+            st.write(f"🔍 DEBUG: Found {len(papers) if papers else 0} papers")
+
+            if not papers:
+                st.error("No papers found")
+                return
+
+        except Exception as e:
+            st.error(f"❌ Error: {str(e)}")
+            import traceback
+            st.code(traceback.format_exc())
             return
 
         # Rank
