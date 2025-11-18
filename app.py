@@ -19,6 +19,99 @@ st.set_page_config(
 st.markdown("""
     <style>
     /* Hide Streamlit branding */
+    /* Modal/Popup Styles */
+    
+    /* --- CUSTOM POPUP STYLES --- */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.65); /* Darker overlay */
+        backdrop-filter: blur(10px); /* Stronger blur */
+        z-index: 9998;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    
+    .custom-modal-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+    
+    .custom-modal-content {
+        background: white;
+        padding: 3rem 3rem 2rem; /* Adjusted padding for better fit */
+        border-radius: 16px;
+        max-width: 550px; /* Slimmer max-width for card look */
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); /* Deeper shadow */
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    
+    .custom-modal-content .stButton>button {
+        background: #1a1a1a;
+        color: white;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        padding: 1rem 3rem;
+        font-weight: 600;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Darker shadow */
+        margin-top: 2rem; /* Spacing */
+    }
+    
+    .custom-modal-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 2rem; /* Separated from content */
+        text-align: center;
+    }
+
+    .modal-step-container {
+        margin-bottom: 1rem;
+    }
+
+    .modal-step-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-right: 0.5rem;
+    }
+
+    .modal-step-text {
+        font-size: 1rem;
+        color: #1a1a1a; /* Darker main text */
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        line-height: 1.5;
+        display: inline-block;
+    }
+
+    .modal-step-example {
+        font-size: 0.9rem;
+        color: #666; /* Lighter example text */
+        margin-left: 2.5rem;
+        margin-top: 0.2rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+        display: block;
+    }
+    
+    /* Ensure no residual Streamlit dialog styles interfere */
+    [data-testid="stDialog"] {
+        display: none !important;
+    }
+
+    /* --- END CUSTOM POPUP STYLES --- */
+    
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display: none;}
 
@@ -394,6 +487,13 @@ class ScholarSyncApp:
     def home_page(self):
         """Minimal landing page"""
 
+        # Check query params for page navigation
+        query_params = st.query_params
+        if query_params.get("page") == "tutorial":
+            st.session_state.page = 'tutorial'
+            st.query_params.clear()
+            st.rerun()
+
         st.markdown("""
             <div class="hero">
                 <h1 class="hero-title">ScholarSync AI</h1>
@@ -403,7 +503,7 @@ class ScholarSyncApp:
             </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
+        # st.markdown("<br>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns(3, gap="medium")
 
         with col1:
@@ -434,11 +534,39 @@ class ScholarSyncApp:
             """, unsafe_allow_html=True)
 
         st.markdown("<br><br>", unsafe_allow_html=True)
+
+        # Check and set state for initial visit
+        if 'first_visit' not in st.session_state:
+            st.session_state.first_visit = True
+            st.session_state.show_tutorial = True  # <-- ADD THIS LINE to show the custom modal
+
         col1, col2, col3 = st.columns([1.25, 0.5, 1.25])
         with col2:
             if st.button("Start", key="start", use_container_width=True):
                 st.session_state.page = 'workflow'
                 st.rerun()
+
+            st.markdown("""
+                <div style='text-align: center; margin-top: 0.75rem;'>
+                    <p style='color: #666; font-size: 0.85rem; margin: 0;'>
+                        <a href='?page=tutorial' style='color: #666; text-decoration: underline; cursor: pointer;'>
+                            How it Works?
+                        </a>
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        # Check for query parameter and update page
+        query_params = st.query_params
+        if query_params.get("page") == "tutorial":
+            st.session_state.page = 'tutorial'
+            st.query_params.clear()  # Clear the parameter after reading
+            st.rerun()
+
+        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+        # ... rest of the footer code ...
+
+
 
         st.markdown("<br><br><br><br>", unsafe_allow_html=True)
         st.markdown("""
@@ -454,6 +582,163 @@ class ScholarSyncApp:
                         </p>
                     </div>
                 """, unsafe_allow_html=True)
+
+    def tutorial_page(self):
+        """Dedicated tutorial page - professional card design"""
+
+        # Professional card CSS
+        st.markdown("""
+        <style>
+        /* Remove all default padding */
+        .block-container {
+            padding-top: 2rem !important;
+            max-width: 900px !important;
+        }
+
+        /* Create card effect for the entire content area */
+        [data-testid="stVerticalBlock"] > [style*="flex-direction: column;"] > [data-testid="stVerticalBlock"] {
+            background: white;
+            padding: 3rem 3.5rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid #f0f0f0;
+            margin: 2rem auto;
+            max-width: 750px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Back button (outside card)
+        if st.button("← Back", key="back_to_home"):
+            st.session_state.page = 'home'
+            st.rerun()
+
+        # Container for card content
+        with st.container():
+            # Title
+            st.markdown("""
+            <h1 style='text-align: center; font-size: 2.1rem; font-weight: 700; 
+                 color: #1a1a1a; margin-bottom: 2.5rem; line-height: 1.3;'>
+                👋 Welcome! Here's how<br>ScholarSync AI works:
+            </h1>
+            """, unsafe_allow_html=True)
+
+            # Step 1
+            st.markdown("""
+            <div style='background: #fafafa; padding: 1.5rem; border-radius: 14px; 
+                 margin-bottom: 1.2rem; border: 1px solid #f0f0f0;'>
+                <div style='display: flex; align-items: flex-start;'>
+                    <div style='display: inline-flex; align-items: center; justify-content: center;
+                         background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+                         color: white; width: 42px; height: 42px; border-radius: 12px;
+                         font-weight: 700; font-size: 1.15rem; margin-right: 1.2rem;
+                         flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>1</div>
+                    <div style='flex: 1;'>
+                        <div style='font-size: 1.15rem; color: #1a1a1a; font-weight: 700; 
+                             line-height: 1.4; margin-bottom: 0.5rem;'>Enter Research Topic</div>
+                        <p style='font-size: 0.95rem; color: #666; line-height: 1.7; margin: 0;'>
+                            Example: <em>transformer models in NLP</em> or <em>quantum computing applications</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Step 2
+            st.markdown("""
+            <div style='background: #fafafa; padding: 1.5rem; border-radius: 14px; 
+                 margin-bottom: 1.2rem; border: 1px solid #f0f0f0;'>
+                <div style='display: flex; align-items: flex-start;'>
+                    <div style='display: inline-flex; align-items: center; justify-content: center;
+                         background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+                         color: white; width: 42px; height: 42px; border-radius: 12px;
+                         font-weight: 700; font-size: 1.15rem; margin-right: 1.2rem;
+                         flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>2</div>
+                    <div style='flex: 1;'>
+                        <div style='font-size: 1.15rem; color: #1a1a1a; font-weight: 700; 
+                             line-height: 1.4; margin-bottom: 0.5rem;'>Choose Papers</div>
+                        <p style='font-size: 0.95rem; color: #666; line-height: 1.7; margin: 0;'>
+                            Select 3-10 papers to find and 1-3 to analyze deeply
+                        </p>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Step 3
+            st.markdown("""
+            <div style='background: #fafafa; padding: 1.5rem; border-radius: 14px; 
+                 margin-bottom: 1.2rem; border: 1px solid #f0f0f0;'>
+                <div style='display: flex; align-items: flex-start;'>
+                    <div style='display: inline-flex; align-items: center; justify-content: center;
+                         background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+                         color: white; width: 42px; height: 42px; border-radius: 12px;
+                         font-weight: 700; font-size: 1.15rem; margin-right: 1.2rem;
+                         flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>3</div>
+                    <div style='flex: 1;'>
+                        <div style='font-size: 1.15rem; color: #1a1a1a; font-weight: 700; 
+                             line-height: 1.4; margin-bottom: 0.5rem;'>Run Analysis</div>
+                        <p style='font-size: 0.95rem; color: #666; line-height: 1.7; margin: 0;'>
+                            AI agents search arxiv, rank by relevance, extract insights (takes about 2 minutes)
+                        </p>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Step 4
+            st.markdown("""
+            <div style='background: #fafafa; padding: 1.5rem; border-radius: 14px; 
+                 margin-bottom: 1.2rem; border: 1px solid #f0f0f0;'>
+                <div style='display: flex; align-items: flex-start;'>
+                    <div style='display: inline-flex; align-items: center; justify-content: center;
+                         background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+                         color: white; width: 42px; height: 42px; border-radius: 12px;
+                         font-weight: 700; font-size: 1.15rem; margin-right: 1.2rem;
+                         flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>4</div>
+                    <div style='flex: 1;'>
+                        <div style='font-size: 1.15rem; color: #1a1a1a; font-weight: 700; 
+                             line-height: 1.4; margin-bottom: 0.5rem;'>Review Results</div>
+                        <p style='font-size: 0.95rem; color: #666; line-height: 1.7; margin: 0;'>
+                            Get ranked papers, detailed analysis, and research gap identification
+                        </p>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Step 5
+            st.markdown("""
+            <div style='background: #fafafa; padding: 1.5rem; border-radius: 14px; 
+                 margin-bottom: 1.2rem; border: 1px solid #f0f0f0;'>
+                <div style='display: flex; align-items: flex-start;'>
+                    <div style='display: inline-flex; align-items: center; justify-content: center;
+                         background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+                         color: white; width: 42px; height: 42px; border-radius: 12px;
+                         font-weight: 700; font-size: 1.15rem; margin-right: 1.2rem;
+                         flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);'>5</div>
+                    <div style='flex: 1;'>
+                        <div style='font-size: 1.15rem; color: #1a1a1a; font-weight: 700; 
+                             line-height: 1.4; margin-bottom: 0.5rem;'>Download Report</div>
+                        <p style='font-size: 0.95rem; color: #666; line-height: 1.7; margin: 0;'>
+                            Save your findings as a formatted markdown file
+                        </p>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Button
+            col1, col2, col3 = st.columns([0.25, 0.5, 0.25])
+            with col2:
+                if st.button("✓ Got it, let's start!", key="start_from_tutorial",
+                             use_container_width=True, type="primary"):
+                    st.session_state.page = 'workflow'
+                    if 'first_visit' in st.session_state:
+                        del st.session_state.first_visit
+                    st.rerun()
 
     def workflow_page(self):
         """Workflow page with topic validation and red border error."""
@@ -755,9 +1040,10 @@ class ScholarSyncApp:
     def run(self):
         if st.session_state.page == 'home':
             self.home_page()
+        elif st.session_state.page == 'tutorial':
+            self.tutorial_page()
         else:
             self.workflow_page()
-
 
 def main():
     app = ScholarSyncApp()
