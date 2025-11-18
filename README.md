@@ -64,22 +64,22 @@ Academic researchers face significant challenges when conducting literature revi
 ### Home Page
 Clean, minimal interface with feature cards highlighting the three-agent system
 
-![Home Page](assets/home-page.png)
+![Home Page](assetss/home-page.png)
 
 ### Interactive Tutorial
 First-time user onboarding modal with 5-step workflow explanation and blurred background
 
-![Tutorial Modal](assets/tutorial-modal.png)
+![Tutorial Modal](assetss/tutorial-modal.png)
 
 ### Analysis in Progress
 Real-time progress tracking with status updates during paper search, ranking, and analysis
 
-![Progress Bar](assets/progress-bar.png)
+![Progress Bar](assetss/progress-bar.png)
 
 ### Results Page
 Comprehensive output with expandable sections for ranked papers, detailed analysis, and research gaps
 
-![Results Page](assets/results-page.png)
+![Results Page](assetss/results-page.png)
 
 ---
 
