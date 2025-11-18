@@ -436,4 +436,4 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with ❤️ for the research community | Powered by Google Gemini 2.0 Flash**
+**Built with ❤️ from Meet Bhorania for the research community | Powered by Google Gemini 2.0 Flash**
