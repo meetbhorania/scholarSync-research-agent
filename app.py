@@ -566,22 +566,21 @@ class ScholarSyncApp:
         st.markdown("<br><br><br><br>", unsafe_allow_html=True)
         # ... rest of the footer code ...
 
-
-
-        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-        st.markdown("""
-                    <div style='position: fixed; bottom: 0; left: 0; width: 100%; 
-                                background: #FFFFFF; border-top: 1px solid #E0E0E0;
-                                text-align: center; color: #999; font-size: 0.85rem; 
-                                padding: 1.5rem 0; z-index: 999;'>
-                        <p style='margin-bottom: 0.5rem;'><strong style='color: #666;'>Automated Literature Review Powered by AI Agents</strong></p>
-                        <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2025</p>
-                        <p style='font-size: 0.75rem; color: #AAA; margin: 0;'>
-                            Created by <strong>Meet Bhorania</strong> • AI Engineer, London • 
-                            <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: none;'>LinkedIn</a>
-                        </p>
-                    </div>
-                """, unsafe_allow_html=True)
+    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+    st.markdown("""
+                <div style='position: fixed; bottom: 0; left: 0; width: 100%; 
+                            background: #FFFFFF; border-top: 1px solid #E0E0E0;
+                            text-align: center; color: #999; font-size: 0.85rem; 
+                            padding: 1.5rem 0; z-index: 999;'>
+                    <p style='margin-bottom: 0.5rem;'><strong style='color: #666;'>Automated Literature Review Powered by AI Agents</strong></p>
+                    <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2025</p>
+                    <p style='font-size: 0.75rem; color: #AAA; margin: 0;'>
+                        Created by <strong>Meet Bhorania</strong> • AI Engineer, London • 
+                        <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: underline;'>LinkedIn</a> • 
+                        <a href='https://medium.com/@meet.bhorania' style='color: #667EEA; text-decoration: underline;'>Medium</a>
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
 
     def tutorial_page(self):
         """Dedicated tutorial page - professional card design"""
