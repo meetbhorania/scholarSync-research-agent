@@ -575,7 +575,7 @@ class ScholarSyncApp:
                                 text-align: center; color: #999; font-size: 0.85rem; 
                                 padding: 1.5rem 0; z-index: 999;'>
                         <p style='margin-bottom: 0.5rem;'><strong style='color: #666;'>Automated Literature Review Powered by AI Agents</strong></p>
-                        <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2024</p>
+                        <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2025</p>
                         <p style='font-size: 0.75rem; color: #AAA; margin: 0;'>
                             Created by <strong>Meet Bhorania</strong> • AI Engineer, London • 
                             <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: none;'>LinkedIn</a>
