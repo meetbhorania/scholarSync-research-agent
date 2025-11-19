@@ -401,7 +401,7 @@ scholarSync-research-agent/
 ## 👨‍💻 Author
 
 **Meet Bhorania**  
-AI Engineer | London, UK
+AI/ML Enthusiast & Engineer | London, UK
 
 - 🎓 BEng Computer Science (First Class Honours) - Anglia Ruskin University, 2024
 - 🏆 Google DeepMind AI Research Foundations Program Graduate
@@ -444,4 +444,4 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with ❤️ for the research community | Powered by Google Gemini 2.0 Flash**
+**Built with ❤️ from Meet Bhorania for the research community | Powered by Google Gemini 2.0 Flash**
