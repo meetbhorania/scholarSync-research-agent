@@ -85,6 +85,14 @@ Comprehensive output with expandable sections for ranked papers, detailed analys
 
 ## 🏗️ Architecture
 
+### System Overview
+
+![ScholarSync AI Architecture](assetss/architecture-diagram.png)
+
+*Multi-agent system architecture showing the complete workflow from user input through three specialized AI agents to final report generation. The system leverages arxiv.org API for paper discovery, PyPDF2 for text extraction, and Google Gemini 2.0 Flash for intelligent ranking, analysis, and synthesis.*
+
+---
+
 ### Multi-Agent System Design
 ```
 ┌─────────────────────────────────────────────────────────┐
