@@ -487,13 +487,6 @@ class ScholarSyncApp:
     def home_page(self):
         """Minimal landing page"""
 
-        # Check query params for page navigation
-        query_params = st.query_params
-        if query_params.get("page") == "tutorial":
-            st.session_state.page = 'tutorial'
-            st.query_params.clear()
-            st.rerun()
-
         st.markdown("""
             <div class="hero">
                 <h1 class="hero-title">ScholarSync AI</h1>
@@ -556,31 +549,28 @@ class ScholarSyncApp:
                 </div>
             """, unsafe_allow_html=True)
 
-        # Check for query parameter and update page
-        query_params = st.query_params
-        if query_params.get("page") == "tutorial":
-            st.session_state.page = 'tutorial'
-            st.query_params.clear()  # Clear the parameter after reading
-            st.rerun()
+            # Check for query parameter and update page
+            query_params = st.query_params
+            if query_params.get("page") == "tutorial":
+                st.session_state.page = 'tutorial'
+                st.query_params.clear()  # Clear the parameter after reading
+                st.rerun()
 
-        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-        # ... rest of the footer code ...
-
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-    st.markdown("""
-                <div style='position: fixed; bottom: 0; left: 0; width: 100%; 
-                            background: #FFFFFF; border-top: 1px solid #E0E0E0;
-                            text-align: center; color: #999; font-size: 0.85rem; 
-                            padding: 1.5rem 0; z-index: 999;'>
-                    <p style='margin-bottom: 0.5rem;'><strong style='color: #666;'>Automated Literature Review Powered by AI Agents</strong></p>
-                    <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2025</p>
-                    <p style='font-size: 0.75rem; color: #AAA; margin: 0;'>
-                        Created by <strong>Meet Bhorania</strong> • AI Engineer, London • 
-                        <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: underline;'>LinkedIn</a> • 
-                        <a href='https://medium.com/@meet.bhorania' style='color: #667EEA; text-decoration: underline;'>Medium</a>
-                    </p>
-                </div>
-            """, unsafe_allow_html=True)
+            st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+            st.markdown("""
+                            <div style='position: fixed; bottom: 0; left: 0; width: 100%; 
+                                        background: #FFFFFF; border-top: 1px solid #E0E0E0;
+                                        text-align: center; color: #999; font-size: 0.85rem; 
+                                        padding: 1.5rem 0; z-index: 999;'>
+                                <p style='margin-bottom: 0.5rem;'><strong style='color: #666;'>AI-Powered Literature Review Automation</strong></p>
+                                <p style='font-size: 0.75rem; color: #BBB; margin-bottom: 0.5rem;'>Built for Kaggle AI Agents Intensive Capstone Project 2025</p>
+                                <p style='font-size: 0.75rem; color: #AAA; margin: 0;'>
+                                    Created by <strong>Meet Bhorania</strong> • AI/ML Enthusiast & Engineer, London • 
+                                    <a href='https://www.linkedin.com/in/meetbhorania' style='color: #667EEA; text-decoration: underline;'>LinkedIn</a> • 
+                                    <a href='https://medium.com/@meet.bhorania' style='color: #667EEA; text-decoration: underline;'>Medium</a>
+                                </p>
+                            </div>
+                        """, unsafe_allow_html=True)
 
     def tutorial_page(self):
         """Dedicated tutorial page - professional card design"""
@@ -618,7 +608,7 @@ class ScholarSyncApp:
             st.markdown("""
             <h1 style='text-align: center; font-size: 2.1rem; font-weight: 700; 
                  color: #1a1a1a; margin-bottom: 2.5rem; line-height: 1.3;'>
-                👋 Welcome! Here's how<br>ScholarSync AI works:
+                👋 Welcome! Here's how ScholarSync AI works:
             </h1>
             """, unsafe_allow_html=True)
 
